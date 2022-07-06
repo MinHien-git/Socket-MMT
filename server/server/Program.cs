@@ -53,19 +53,25 @@ namespace Server
             string response = string.Empty;
             String[] strs = ReadData(text);
 
-            if (strs[0].ToLower() != "login")
+            if (strs[0].ToLower() == "login")
             {
-                response = "Invalid Request";
-            }
-            else
-            {  
                 if (strs[1] == "MinhHien" && strs[2] == "123456")
                 {
                     response = "Login Success";
-                }else
+                }
+                else
                 {
                     response = "Wrong username or password";
                 }
+            }
+            else if (strs[0].ToLower() == "logout")
+            {
+                response = "Logout Success";
+            }
+            else
+            {
+                response = "Invalid Request";
+                
             }
 
             byte[] data = Encoding.ASCII.GetBytes(response);

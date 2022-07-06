@@ -15,6 +15,9 @@ namespace Client
 
         private const int PORT = 100;
 
+        private static bool isLoggedIn = false;
+        private static Customer customer;
+
         static void Main()
         {
             Console.Title = "Client";
@@ -80,7 +83,10 @@ namespace Client
             }else if(request.ToLower() == "login")
             {
                 LoginForm();
-            }    
+            }else if(request.ToLower() == "logout")
+            {
+                Logout();
+            }
         }
 
         /// <summary>
@@ -99,9 +105,25 @@ namespace Client
 
             Console.WriteLine("Enter your password: ");
             string password = Console.ReadLine();
-            
+            customer = new Customer(name, password);
             SendLoginData(name, password);
         } 
+
+        private static void Logout()
+        {
+            Console.WriteLine("Do you wanted to logout");
+            Console.WriteLine(@"<Type ""yes"" or ""no"" ");
+            string choice = Console.ReadLine();
+            if(choice.ToLower() == "no")
+            {
+                return;
+            }else if(choice.ToLower() == "yes")
+            {
+                byte[] buffer = Encoding.ASCII.GetBytes("logout");
+                ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+            }
+            
+        }
 
         private static void SendLoginData(string name,string password)
         {
@@ -125,6 +147,33 @@ namespace Client
             Array.Copy(buffer, data, received);
             string text = Encoding.ASCII.GetString(data);
             Console.WriteLine(text);
+
+            if (text == "Login Success")
+            {
+                Console.WriteLine("Login Success to " + customer.readName());
+                Console.WriteLine(@"<Type ""logout"" to logout client>");
+            }else if(text == "Logout Success")
+            {
+                customer = new Customer("","");
+            }
+                     
+        }
+
+        class Customer
+        {
+            string name;
+            string creditCard;
+
+            public Customer(string name,string creditcard)
+            {
+                this.name = name;
+                this.creditCard = creditcard;
+            }
+
+            public string readName()
+            {
+                return name;
+            }
         }
     }
 }

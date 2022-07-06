@@ -86,6 +86,9 @@ namespace Client
             }else if(request.ToLower() == "logout")
             {
                 Logout();
+            }else if(request.ToLower() == "checkout")
+            {
+                Checkout();
             }
         }
 
@@ -135,6 +138,13 @@ namespace Client
         {
 
         }
+
+        private static void Checkout()
+        {
+             byte[] buffer = Encoding.ASCII.GetBytes("checkout");
+             ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+        }
+
         /// <summary>
         /// end modifiler for socket
         /// </summary>
@@ -146,7 +156,7 @@ namespace Client
             var data = new byte[received];
             Array.Copy(buffer, data, received);
             string text = Encoding.ASCII.GetString(data);
-            Console.WriteLine(text);
+            
 
             if (text == "Login Success")
             {
@@ -154,8 +164,13 @@ namespace Client
                 Console.WriteLine(@"<Type ""logout"" to logout client>");
             }else if(text == "Logout Success")
             {
+                Console.WriteLine("Logout Success! Check out as a guest");
                 customer = new Customer("","");
-            }
+            }else if (text.Split("/")[0] == "checkout")
+            {
+                Console.WriteLine("Your in checkout section");
+                Console.WriteLine(text.Split("/")[1]);
+            }    
                      
         }
 
@@ -175,5 +190,6 @@ namespace Client
                 return name;
             }
         }
+
     }
 }

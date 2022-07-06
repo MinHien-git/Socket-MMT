@@ -68,6 +68,10 @@ namespace Server
             {
                 response = "Logout Success";
             }
+            else if (strs[0].ToLower() == "checkout")
+            {
+                response = "checkout/{}";
+            }
             else
             {
                 response = "Invalid Request";

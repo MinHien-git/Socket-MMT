@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.IO;
 
 namespace Server
 {
@@ -70,7 +72,10 @@ namespace Server
             }
             else if (strs[0].ToLower() == "checkout")
             {
-                response = "checkout/{}";
+                string path = Path.GetFullPath("hotelCollection.json");
+                string json =File.ReadAllText(path);
+                response = "checkout/"+json;
+               
             }
             else
             {

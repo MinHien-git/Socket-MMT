@@ -1,0 +1,31 @@
+[
+
+    {
+        "id": 1,
+        "name": "Hotel 1",
+        "rooms": [
+            {
+                "id": 1,
+                "isBooking": false
+            },
+            {
+                "id": 2,
+                "isBooking": false
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Hotel 2",
+        "rooms": [
+            {
+                "id": 1,
+                "isBooking": false
+            },
+            {
+                "id": 2,
+                "isBooking": false
+            }
+        ]
+    }
+]

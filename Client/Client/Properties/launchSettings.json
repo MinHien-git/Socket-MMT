@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Client": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\Visual Studio\\repo\\Socket MMT\\server\\server"
+    }
+  }
+}

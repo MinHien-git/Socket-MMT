@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using System.Text.Json;
 
 namespace Client
 {
@@ -169,9 +170,24 @@ namespace Client
             }else if (text.Split("/")[0] == "checkout")
             {
                 Console.WriteLine("Your in checkout section");
-                Console.WriteLine(text.Split("/")[1]);
+                var rooms = JsonSerializer.Deserialize<List<Hotel>>(text.Split("/")[1]);
+                //Console.WriteLine(rooms[0].rooms[1].isBooking);
+                WriteHotelRoom(rooms);
+
             }    
                      
+        }
+
+        private static void WriteHotelRoom(List<Hotel> hotels)
+        {
+            for(int i = 0;i < hotels.Count;++i)
+            {
+                Console.WriteLine(hotels[i].name);
+                for(int j =0; j < hotels[i].rooms.Count;++j)
+                {
+                    Console.WriteLine(hotels[i].rooms[j]);
+                }
+            }
         }
 
         class Customer
@@ -189,6 +205,20 @@ namespace Client
             {
                 return name;
             }
+        }
+
+        public class Room
+        {
+            public int id { get; set; }
+            public bool isBooking { get; set; }
+        }
+
+        public class Hotel
+        {
+            public int id { get; set; }
+            public string name { get; set; }
+            public List<Room> rooms { get; set; }
+
         }
 
     }

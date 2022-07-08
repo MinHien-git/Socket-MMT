@@ -1,0 +1,24 @@
+[
+
+    {
+        "id": 0,
+        "name": "MinhHien",
+        "password": "123456",
+        "creditnumber": "0123456789",
+        "room": []
+    },
+    {
+        "id": 1,
+        "name": "MinhDinh",
+        "password": "123456",
+        "creditnumber": "0101010101",
+        "room": []
+    },
+    {
+        "id": 2,
+        "name": "NgocLan",
+        "password": "AnitWibuBANGBANGHentaiZPoRNHUB",
+        "creditnumber": "0101010101",
+        "room": []
+    }
+]

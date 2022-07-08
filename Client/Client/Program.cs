@@ -90,6 +90,12 @@ namespace Client
             }else if(request.ToLower() == "checkout")
             {
                 Checkout();
+            }else if(request.ToLower() == "signup")
+            {
+                SignupForm();
+            }else if(request.ToLower() == "booking")
+            {
+                Booking();
             }
         }
 
@@ -112,6 +118,83 @@ namespace Client
             customer = new Customer(name, password);
             SendLoginData(name, password);
         } 
+
+        private static void SignupForm()
+        {
+            Console.WriteLine("Enter your user name: "); //cout << endl
+            string name = Console.ReadLine(); //cin >> 
+
+            Console.WriteLine("Enter your password: ");
+            string password = Console.ReadLine();
+            Console.WriteLine("Enter your credit card number: ");
+            string creditCardNumber = Console.ReadLine();
+            
+            if(Int64.TryParse(creditCardNumber,out long result))
+            {
+                SendResigterData(name, password, creditCardNumber);
+            }else
+            {
+                SendString("Your username or creditCardNumber is wrong please check again");
+            }
+            
+        }
+
+        private static void Booking()
+        {
+            Console.WriteLine("Hotel id : ");
+            string hotelId = Console.ReadLine();
+
+            Console.WriteLine("Enter room id name : ");
+            string roomId = Console.ReadLine();
+
+            Console.WriteLine("date in : ");
+            string date = Console.ReadLine();
+            Console.WriteLine("month in : ");
+            string month = Console.ReadLine();
+
+            Console.WriteLine("date out : ");
+            string dateOut = Console.ReadLine();
+            Console.WriteLine("month out : ");
+            string monthOut = Console.ReadLine();
+            //booking hotel1 12/12 13/12
+            if(CheckDate(date,month) && CheckDate(dateOut, monthOut)) { 
+                SendString("booking" + " " + hotelId + " " + roomId +" " + date + "/" + month + " " + dateOut + "/" + monthOut);
+            }else
+            {
+                SendString("Wrong date or month Try again");
+            }
+        }
+        
+        private static bool CheckDate(string date,string month)
+        {
+            int dateI = Int32.Parse(date);
+            switch (Int32.Parse(month))
+            {
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    if (dateI <= 31)
+                    {
+                        return true;
+                    }
+                    break;
+                case 2:
+                    if (dateI <= 28)
+                        return true;
+                    break;
+                case 4: case 6: case 9: case 11:
+                    if (dateI <= 30)
+                        return true;
+                    break;
+                default:
+                    return false;
+            }
+            return false;
+        }
 
         private static void Logout()
         {
@@ -137,13 +220,21 @@ namespace Client
 
         private static void SendResigterData(string name,string password,string creditNumber)
         {
-
+            byte[] buffer = Encoding.ASCII.GetBytes("signup" + " " + name + " " + password + " " + creditNumber);
+            ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
         }
 
         private static void Checkout()
         {
              byte[] buffer = Encoding.ASCII.GetBytes("checkout");
              ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+        }
+
+        private static void CheckoutInfo(string name, int hotelId,int id)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes("checkout" + " " + hotelId + " " + id + " " + customer.name);
+            ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+            
         }
 
         /// <summary>
@@ -167,14 +258,17 @@ namespace Client
             {
                 Console.WriteLine("Logout Success! Check out as a guest");
                 customer = new Customer("","");
-            }else if (text.Split("/")[0] == "checkout")
+            }else if (text.Split("/")[0] == "checkout") //checkout/{}
             {
                 Console.WriteLine("Your in checkout section");
                 var rooms = JsonSerializer.Deserialize<List<Hotel>>(text.Split("/")[1]);
                 //Console.WriteLine(rooms[0].rooms[1].isBooking);
                 WriteHotelRoom(rooms);
 
-            }    
+            }else
+            {
+                Console.WriteLine(text);
+            }
                      
         }
 
@@ -182,18 +276,18 @@ namespace Client
         {
             for(int i = 0;i < hotels.Count;++i)
             {
-                Console.WriteLine(hotels[i].name);
+                Console.WriteLine(hotels[i].name + " : " + hotels[i].id);
                 for(int j =0; j < hotels[i].rooms.Count;++j)
                 {
-                    Console.WriteLine(hotels[i].rooms[j]);
+                    Console.WriteLine("Room : " + hotels[i].rooms[j].id );
                 }
             }
         }
 
         class Customer
         {
-            string name;
-            string creditCard;
+            public string name;
+            public string creditCard;
 
             public Customer(string name,string creditcard)
             {
@@ -212,6 +306,7 @@ namespace Client
             public int id { get; set; }
             public bool isBooking { get; set; }
         }
+
 
         public class Hotel
         {

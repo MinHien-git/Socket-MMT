@@ -1,31 +1,30 @@
 [
-
-    {
+  {
+    "id": 1,
+    "name": "Hotel1",
+    "rooms": [
+      {
         "id": 1,
-        "name": "Hotel 1",
-        "rooms": [
-            {
-                "id": 1,
-                "isBooking": false
-            },
-            {
-                "id": 2,
-                "isBooking": false
-            }
-        ]
-    },
-    {
+        "isBooking": false
+      },
+      {
         "id": 2,
-        "name": "Hotel 2",
-        "rooms": [
-            {
-                "id": 1,
-                "isBooking": false
-            },
-            {
-                "id": 2,
-                "isBooking": false
-            }
-        ]
-    }
+        "isBooking": false
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Hotel2",
+    "rooms": [
+      {
+        "id": 1,
+        "isBooking": false
+      },
+      {
+        "id": 2,
+        "isBooking": false
+      }
+    ]
+  }
 ]

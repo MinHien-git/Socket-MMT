@@ -15,7 +15,9 @@ namespace Server
     {
         private static byte[] _buffer = new byte[1024];
         private static List<Socket> _clientSockets = new List<Socket>();
+        // lấy 1 list socket client mục đích là hỗ trợ multiple client
         private static Socket _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        //AddressFamily.InterNetwork địa chỉ gia đình SocketType.Stream: gửi và nhận (đi và về) ưu điểm ổn định  
         static void Main(string[] args)
         {
             Console.Title = "Server";
@@ -38,18 +40,18 @@ namespace Server
             Socket socket = _serverSocket.EndAccept(AR);
             _clientSockets.Add(socket);
             Console.WriteLine("Client Connected to Server");
-            socket.BeginReceive(_buffer,0,_buffer.Length,SocketFlags.None, new AsyncCallback(ReceiveCallback),socket);
+            socket.BeginReceive(_buffer,0,_buffer.Length,SocketFlags.None, new AsyncCallback(ReceiveCallback),socket); //SocketFlags.None : Chỉ định các hành vi gửi và nhận của socket
             _serverSocket.BeginAccept(new AsyncCallback(AcceptCallBack), null);
 
         }
 
         private static void ReceiveCallback(IAsyncResult AR)
         {
-            Socket socket = (Socket)AR.AsyncState;
-            int received = socket.EndReceive(AR);
-            byte[] dataBuf = new byte[received];
-            Array.Copy(_buffer,dataBuf,received);
-            string text = Encoding.ASCII.GetString(dataBuf);
+            Socket socket = (Socket)AR.AsyncState; //object lưu hay 1 tiêu chuẩn về bất đồng bộ
+            int received = socket.EndReceive(AR);// cách thức sẽ chặn đến khi dữ liệu xuất hiện hoặc tìm thấy dữ liệu 
+            byte[] dataBuf = new byte[received];//Đại diện cho trạng thái của một hoạt động không đồng bộ.
+            Array.Copy(_buffer,dataBuf,received);//Copy dữ lữ liệu từ databuf -> _buffer với chiều dài dữ liệu là recevied
+            string text = Encoding.ASCII.GetString(dataBuf);// chuyển dữ liệu thành string
 
             Console.WriteLine("Text received : " + text);
 
@@ -60,7 +62,7 @@ namespace Server
             {
                 string path = Path.GetFullPath("account.json");
                 string json =File.ReadAllText(path);
-                var accounts =System.Text.Json.JsonSerializer.Deserialize<List<Customer>>(json);
+                var accounts =System.Text.Json.JsonSerializer.Deserialize<List<Customer>>(json); //Deserialize : biến file json thành 1 cái class
 
                 bool haveAccount = false;
                 if(accounts != null)
@@ -114,7 +116,7 @@ namespace Server
                     string json = File.ReadAllText(path);
                     var accounts = System.Text.Json.JsonSerializer.Deserialize<List<Customer>>(json);
                     accounts.Add(customer);
-                    var jsonToWrite = JsonConvert.SerializeObject(accounts, Formatting.Indented);
+                    var jsonToWrite = JsonConvert.SerializeObject(accounts, Formatting.Indented); //SerializeObject: biến 1 list class thành 1 định dạng json
                     using (var writer = new StreamWriter(path))
                     {
                         writer.Write(jsonToWrite);
@@ -167,8 +169,8 @@ namespace Server
             }
 
             byte[] data = Encoding.ASCII.GetBytes(response);
-            socket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(SendCallback), socket);
-            socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket);
+            socket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(SendCallback), socket); // gửi dữ liệu bất đồng bộ đến client
+            socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveCallback), socket); // nhận dữ liệu bất đồng bộ từ client
 
         }
         /// <summary>
@@ -176,7 +178,7 @@ namespace Server
         /// </summary>
         private static string[] ReadData(string text)
         {
-           String[] splitStr = text.Split(" ");
+           String[] splitStr = text.Split(" ");// biến những request thành 1 mảng string để phân tích
 
             return splitStr;
         }
@@ -222,9 +224,9 @@ namespace Server
 
         private static void SendCallback(IAsyncResult AR)
         {
-            Socket socket = (Socket)AR.AsyncState;
+            Socket socket = (Socket)AR.AsyncState;// trạng thái gửi bất đồng bộ
 
-            socket.EndSend(AR);
+            socket.EndSend(AR);//đợi dữ liệu đến
         }
     }
 

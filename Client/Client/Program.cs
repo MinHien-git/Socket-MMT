@@ -13,7 +13,8 @@ namespace Client
     {
         private static readonly Socket ClientSocket = new Socket
             (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
+        // Khởi tạo socket AddressFamily.InterNetwork address family == Datagram
+        //Loại socket SocketType.Stream: 2 chiều 
         private const int PORT = 100;
 
         private static bool isLoggedIn = false;
@@ -39,6 +40,7 @@ namespace Client
                     Console.WriteLine("Connection attempt " + attempts);
                     // Change IPAddress.Loopback to a remote IP to connect to a remote host.
                     ClientSocket.Connect(IPAddress.Loopback, PORT);
+                    //IPAddress.Loopback lấy lại địa chỉ ip
                 }
                 catch (SocketException)
                 {
@@ -106,6 +108,7 @@ namespace Client
         {
             byte[] buffer = Encoding.ASCII.GetBytes(text);
             ClientSocket.Send(buffer, 0, buffer.Length, SocketFlags.None);
+            //cách thức xử lí nhận và gửi 
         }
 
         private static void LoginForm()
